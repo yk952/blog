@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings  # 用于关联用户模型
 
-
 class Category(models.Model):
     """文章分类模型"""
     name = models.CharField(

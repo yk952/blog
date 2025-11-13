@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from .models import Article  # 导入Article模型
 from .serializers import ArticleSerializer  # 导入上面定义的序列化器
-
+from rest_framework.permissions import IsAuthenticated
 
 class ArticleViewSet(viewsets.ModelViewSet):
     """
@@ -17,6 +17,11 @@ class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all()
     # 序列化器：指定使用的序列化器
     serializer_class = ArticleSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # 发布文章时，将当前登录用户设置为作者
+        serializer.save(author=self.request.user)
 
 def get_permissions(self):
     if self.action in ['create', 'update', 'partial_update', 'destroy']:
