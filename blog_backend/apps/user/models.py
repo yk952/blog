@@ -4,7 +4,6 @@ from django.utils.translation import gettext_lazy as _
 
 
 class User(AbstractUser):
-    """扩展Django内置User模型，添加头像字段"""
     avatar = models.ImageField(
         upload_to='avatars/',
         verbose_name=_('用户头像'),
