@@ -95,7 +95,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # 允许前端域名（根据实际调整）
+    "http://localhost:5173",  # 允许前端域名（根据实际调整）
 ]
 
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # 关闭邮箱验证（测试用）
