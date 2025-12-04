@@ -3,15 +3,21 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "overrides": {
+    "lodash.isequal": "^4.5.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.13.2",
+    "element-plus": "^2.11.9",
+    "quill": "^2.0.3",
     "vue": "^3.5.22",
-    "vue-router": "^4.6.3"
+    "vue-quill-editor": "^3.0.6"
   },
   "devDependencies": {
     "@types/node": "^24.6.0",
@@ -19,6 +25,7 @@
     "@vue/tsconfig": "^0.8.1",
     "typescript": "~5.9.3",
     "vite": "^7.1.7",
+    "vue-router": "^4.6.3",
     "vue-tsc": "^3.1.0"
   }
 }

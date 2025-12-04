@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
+    "django_filters",
     "dj_rest_auth",
     "dj_rest_auth.registration",
     "allauth",
@@ -53,7 +54,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # 跨域中间件（放最前面）
-    'django.middleware.common.CommonMiddleware',
+    #'django.middleware.common.CommonMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware", 
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -96,6 +97,12 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # 允许前端域名（根据实际调整）
+]
+
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "OPTIONS",  # 必须包含，预检请求用
 ]
 
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # 关闭邮箱验证（测试用）

@@ -1,29 +1,19 @@
 <template>
   <div class="home-container">
     <h1>最新文章</h1>
-    <div class="article-list">
-      <div class="article-item">
-        <router-link to="/article/1" class="article-title">创建者</router-link>
-        <p class="article-desc">yk</p>
-        <div class="article-meta">发布时间：2025-11-17</div>
-      </div>
-
-      <div class="article-item">
-        <router-link to="/article/2" class="article-title">内容</router-link>
-        <p class="article-desc">blog</p>
-        <div class="article-meta">发布时间：2025-11-17</div>
-      </div>
-    </div>
-  </div>
-  <div class="home-page">
-    <h2>文章列表</h2>
+    
+    <!-- 加载状态 -->
     <div class="loading" v-if="loading">
       正在努力加载文章
     </div>
+    
+    <!-- 错误提示 -->
     <div class="error" v-if="error">
       <p>-_-:{{ error }}</p>
       <button @click="fetchArticles">重试</button>
     </div>
+    
+    <!-- 文章列表 -->
     <div class="article-list" v-if="articles.length>0">
       <div class="article-item" v-for="article in articles" :key="article.id">
         <router-link :to="'/article/' + article.id" class="article-title">{{ article.title }}</router-link>
@@ -31,6 +21,8 @@
         <div class="article-meta">发布时间：{{ article.create_time }}</div>
       </div>
     </div>
+    
+    <!-- 无文章提示 -->
     <div class="no-articles" v-if="articles.length === 0 && !loading && !error">
       <p>暂无文章</p>
     </div>
@@ -40,36 +32,33 @@
 <script setup>
 import { getArticles } from '@/api/article'
 import { ref } from 'vue'
-import { RouterLink } from 'vue-router' // 若用了<RouterLink>需要导入
+import { RouterLink } from 'vue-router'
 
-// 确认文件运行的日志
 console.log("首页文件已经启动了！");
 
-// 组合式API的响应式变量（替代选项式的data）
 const articles = ref([])
 const loading = ref(false)
 const error = ref(null)
 
-// 加载文章的函数（替代选项式的methods）
 async function fetchArticles() {
   console.log("开始尝试加载文章了！");
   loading.value = true
   try {
-    const 后端数据 = await getArticles()
-    console.log("后端给的数据：", 后端数据);
-    articles.value = 后端数据
+    const response = await getArticles() // 规范变量名
+    console.log("后端返回的数据：", response);
+    articles.value = response.data || []; // 兼容接口返回格式
   } catch (err) {
     console.log("加载失败了：", err);
-    error.value = "加载失败"
+    // 更具体的错误信息
+    error.value = err.response?.data?.message || "加载文章失败，请稍后重试"
   } finally {
     loading.value = false
   }
 }
 
-// 组件启动时自动加载（替代选项式的created）
+// 组件启动时自动加载
 fetchArticles()
 </script>
-
 
 <style scoped>
 .home-container {
@@ -125,5 +114,34 @@ h1 {
 .article-meta {
   color: var(--heo-secondtext);
   font-size: 0.9rem;
+}
+
+/* 加载和错误样式可补充 */
+.loading {
+  color: var(--heo-secondtext);
+  padding: 2rem;
+  text-align: center;
+}
+
+.error {
+  color: #ff4d4f; /* 错误色 */
+  padding: 2rem;
+  text-align: center;
+}
+
+.error button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background: var(--heo-main);
+  color: white;
+  cursor: pointer;
+}
+
+.no-articles {
+  color: var(--heo-secondtext);
+  padding: 2rem;
+  text-align: center;
 }
 </style>

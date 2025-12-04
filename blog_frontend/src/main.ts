@@ -1,8 +1,21 @@
 import { createApp } from 'vue'
-import './style.css'
 import App from './App.vue'
-import router from './router/index.js'
+import router from './router'
+import axios from 'axios'
 
 const app = createApp(App)
-app.use(router)
-app.mount('#app')
+
+// Axios请求拦截器：自动添加Token
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers.Authorization = `Token ${token}`  // 与后端Token认证格式一致
+    }
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
+app.config.globalProperties.$axios = axios
+app.use(router).mount('#app')
