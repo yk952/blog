@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings  # 用于关联用户模型
+from django.contrib.auth.models import User
 
 class Category(models.Model):
     """文章分类模型"""
@@ -55,14 +56,6 @@ class Article(models.Model):
     is_published = models.BooleanField(
         default=False,  # 默认未发布
         verbose_name="是否发布"
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="创建时间"
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name="更新时间"
     )
 
     class Meta:

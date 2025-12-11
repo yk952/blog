@@ -28,6 +28,7 @@
           ref="quillRef" 
           :options="editorOptions"
           class="editor"
+          @update:content="syncContent"
         />
       </div>
       <button type="submit" class="submit-btn">
@@ -63,15 +64,15 @@ const categories = ref([])
 // 富文本编辑器配置
 const editorOptions = ref({
   theme: 'snow',
-  modules: {
-    toolbar: [
-      ['bold', 'italic', 'underline'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'align': [] }],
-      ['link', 'image'],
-      ['clean']
-    ]
-  }
+  //modules: {
+    //toolbar: [
+      //['bold', 'italic', 'underline'],
+      //[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      //[{ 'align': [] }],
+      //['link', 'image'],
+      //['clean']
+    //]
+  //}
 })
 
 // 获取分类列表
@@ -98,8 +99,24 @@ const getArticleDetail = async () => {
   }
 }
 
+// 同步富文本内容到form.value.content
+const syncContent = (content,delta,source,editor) => {
+  form.value.content = editor.getText();
+  console.log('编辑器当前内容：', form.value.content);
+  if (!quillRef.value) return; // 增加空值保护
+  form.value.content = quillRef.value.getHTML(); // 改用编辑器实例的getHTML()
+}
+
 // 提交文章（创建/更新）
 const handleSubmit = async () => {
+    const editorInstance = quillRef.value; // 获取编辑器实例
+  if (editorInstance) {
+    // 直接从实例拿HTML内容，赋值给form.content
+    form.value.content = editorInstance.getHTML(); 
+  }
+
+  // 打印强制同步后的内容，确认是否有值
+  console.log('强制同步后要提交的内容：', form.value.content);
   try {
     if (isEdit) {
       // 编辑：PUT请求
@@ -112,7 +129,12 @@ const handleSubmit = async () => {
     }
     router.push('/')  // 跳转到首页
   } catch (err) {
-    ElMessage.error(err.response?.data?.non_field_errors?.[0] || '操作失败')
+    console.log('后端完整错误：', err.response?.data); 
+  // 显示具体错误，而不是模糊的“操作失败”
+  ElMessage.error(
+    err.response?.data?.content?.[0] ||  // 显示 content 字段的错误
+    err.response?.data?.non_field_errors?.[0] || 
+    '操作失败')
   }
 }
 
@@ -122,6 +144,7 @@ onMounted(() => {
   if (isEdit) {
     getArticleDetail()
   }
+  console.log('编辑器实例：', quillRef.value);
 })
 </script>
 

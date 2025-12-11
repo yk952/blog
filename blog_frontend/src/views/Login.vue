@@ -32,7 +32,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { login } from '@/api/user'
-import { ElMessage } from 'element-plus'  // 需安装element-plus（或自定义提示）
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const username = ref('')
@@ -40,18 +40,29 @@ const password = ref('')
 
 const handleLogin = async () => {
   try {
-    const res = await login({ username: username.value, password: password.value })
-    // 存储Token和用户信息到localStorage
-    localStorage.setItem('token', res.data.token)
-    localStorage.setItem('username', res.data.username)
-    localStorage.setItem('user_id', res.data.user_id)
+    const res = await login({ username: username.value, password: password.value });
     
-    ElMessage.success('登录成功！')
-    router.push('/')  // 跳转到首页
+    // 1. 强制校验Token存在
+    if (!res.token) {
+      ElMessage.error('登录失败：未获取到Token');
+      return;
+    }
+
+    // 2. 正确存储（确保key与请求拦截器读取的一致）
+    localStorage.setItem('token', res.token.trim());
+    localStorage.setItem('username', res.username);
+    localStorage.setItem('user_id', res.user_id.toString());
+
+    // 3. 验证存储结果（调试用）
+    console.log('存储的Token：', localStorage.getItem('token'));
+
+    ElMessage.success('登录成功');
+    router.push('/');
   } catch (err) {
-    ElMessage.error(err.response?.data?.non_field_errors?.[0] || '登录失败')
+    console.error('登录错误：', err);
+    ElMessage.error('登录失败');
   }
-}
+};
 </script>
 
 <style scoped>
@@ -87,8 +98,15 @@ const handleLogin = async () => {
   border-radius: 4px;
   cursor: pointer;
 }
+.login-btn:hover {
+  background: #359469;
+}
 .register-link {
   margin-top: 10px;
   text-align: center;
+}
+.register-link a {
+  color: #42b983;
+  text-decoration: none;
 }
 </style>

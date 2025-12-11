@@ -21,6 +21,6 @@ from django.urls import path, include
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/users/",include("apps.user.urls")),
-    path("api/article/", include("apps.article.urls")), #两个路由都会起作用，看谁先被匹配上，谁先生效使用谁的
+    path("api/", include("apps.article.urls")), #两个路由都会起作用，看谁先被匹配上，谁先生效使用谁的
     path("api/comments/",include("apps.comment.urls")),
 ]
